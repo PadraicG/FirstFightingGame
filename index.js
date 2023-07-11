@@ -6,7 +6,7 @@ canvas.height = 576;
 
 c.fillRect(0, 0, 1024, 576)
 
-const gravity = 0.2
+const gravity = 0.7
 
 //create class for sprites including constructor with pos and velocity
 class Sprite {
@@ -14,6 +14,7 @@ class Sprite {
         this.position = position;
         this.velocity = velocity;
         this.height = 150;
+        this.lastKey;
     }
     //draw initial sprites
     draw() {
@@ -67,9 +68,14 @@ const keys = {
     },
     w: {
         pressed: false
+    },
+    ArrowLeft:{
+        pressed:false
+    },
+    ArrowRight:{
+        pressed:false
     }
 }
-let lastKey;
 
 
 //function to allow for animation
@@ -82,15 +88,23 @@ function animate(){
     player.update();
     enemy.update();
     
-    player.velocity.x = 0
+    player.velocity.x = 0;
+    enemy.velocity.x =0;
 
     //lastKey is used as well to overwrite current key with the most recently pressed one for smoother movement
-    if (keys.a.pressed && lastKey == 'a'){
-        player.velocity.x = -1
-        lastKey = 'a'
-    } else if (keys.d.pressed && lastKey == 'd'){
-        player.velocity.x = 1;
-        lastKey ='d'
+    //player movement
+    if (keys.a.pressed && player.lastKey == 'a'){
+        player.velocity.x = -5;
+    } else if (keys.d.pressed && player.lastKey == 'd'){
+        player.velocity.x = 5;
+        
+    }
+    //enemy movement
+    if (keys.ArrowLeft.pressed && enemy.lastKey == 'ArrowLeft'){
+        enemy.velocity.x = -5
+    } else if (keys.ArrowRight.pressed && enemy.lastKey == 'ArrowRight'){
+        enemy.velocity.x = 5;
+        
     }
 }
 //calling animate function
@@ -103,15 +117,28 @@ window.addEventListener("keydown", (event) =>{
     switch (event.key){
         case 'd':
             keys.d.pressed = true;
-            lastKey = 'd'
+            player.lastKey = 'd'
         break;
         case 'a':
             keys.a.pressed = true;
-            lastKey = 'a'
+            player.lastKey = 'a'
         break;
         case 'w':
             //for w, we just set velocity straight away because we already set up gravity
-            player.velocity.y = -10;
+            player.velocity.y = -20;
+        break;
+        //enemy keys
+        case 'ArrowRight':
+            keys.ArrowRight.pressed = true;
+            enemy.lastKey = 'ArrowRight'
+        break;
+        case 'ArrowLeft':
+            keys.ArrowLeft.pressed = true;
+            enemy.lastKey = 'ArrowLeft'
+        break;
+        case 'ArrowUp':
+            //for w, we just set velocity straight away because we already set up gravity
+            enemy.velocity.y = -20;
         break;
     }
 })
@@ -126,6 +153,16 @@ window.addEventListener("keyup", (event) =>{
         break;
         case 'w':
             keys.w.pressed = false;
+        break;
+
+        case 'ArrowRight':
+            keys.ArrowRight.pressed = false;
+        break;
+        case 'ArrowLeft':
+            keys.ArrowLeft.pressed = false;
+        break;
+        case 'ArrowUp':
+            keys.ArrowUp.pressed = false;
         break;
     }
 })
